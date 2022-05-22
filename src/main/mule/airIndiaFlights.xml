@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="43e59087-32ff-4591-b0c0-25982a64f88b" >
+		<wsc:connection wsdlLocation="http://airindia-services.us-e2.cloudhub.io/airindia?wsdl" service="TicketServiceService" port="TicketServicePort" address="http://airindia-services.us-e2.cloudhub.io/airindia" />
+	</wsc:config>
+	<flow name="airIndiaFlightsFlow" doc:id="b6143acc-12ba-4e6b-9a08-070d7f8cec85" >
+		<http:listener doc:name="Listener" doc:id="5c3cacbe-e017-48b1-a0d6-8f261a4c16b9" config-ref="flightbookingapi-httpListenerConfig" path="/airIndiaFlights"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cceb4c2d-71d2-4fd0-aa64-7fb9ff08ed38" message="airIndiaFlightsFlow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="646b975b-43dd-4a6d-9096-dc17d3013cbd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://soap.training.mulesoft.com/
+---
+{
+	ns0#getFlights: {
+		from: attributes.queryParams.source as String,
+		to: attributes.queryParams.destination as String,
+		depatureDate: attributes.queryParams.doj as String
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="3846de40-0543-4730-827b-034f7b397bcb" config-ref="Web_Service_Consumer_Config" operation="getFlights"/>
+		<ee:transform doc:name="Transform Message" doc:id="c09b7b5d-80b4-46a5-8b84-6c7660ac8df9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://soap.training.mulesoft.com/
+---
+payload.body.ns0#getFlightsResponse.*return map ( return , indexOfReturn ) -> {
+	Id: return.ID default 0,
+	airlineName: return.airline default "",
+	fCode: return.flightCode default "",
+	fromAirportCode: return.fromAirportCode default "",
+	toAirportCode: return.toAirportCode default "",
+	departureDate: return.departureDate default "",
+	emptySeats: return.emptySeats default 0,
+	totalSeats: return.totalSeats as Number default 0,
+	price: return.price default 0,
+	planeType: return.planeType default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ff278f7d-8d79-4ed2-917b-4ff04a8d674c" message="Response from airIndiaFlights---#[payload]"/>
+	</flow>
+</mule>

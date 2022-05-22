@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="accountDetailsFlow" doc:id="448dbef4-ad35-465c-b996-49bfeec1e1b5" >
+		<logger level="INFO" doc:name="Logger" doc:id="7cd95534-1d7b-43c6-be48-57b6ce66c7fa" />
+		<db:select doc:name="Select" doc:id="c5c5381c-62fd-4e0e-97e2-7fc443fc4118" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from account where accountId = :accountId;  ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	accountId: attributes.queryParams.accountId	
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="7350f745-1ba7-4aa7-bbf4-9f4b8b31a18f" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<ee:transform doc:name="Transform Message" doc:id="4351b0ee-75e6-4231-9bd7-6d56ad167de3" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="dd7e357c-8354-4936-850f-858ebad70b27" type="ACC:INVALID_ACCOUNT_ID" description="Invalid Account ID"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="54b8d260-b210-417d-ae54-83c252904a27" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="abd348f2-86d5-421b-b7ef-afe4dced1c62" type="ACC:INVALID_ACCOUNT_ID">
+				<ee:transform doc:name="Transform Message" doc:id="607f6429-fb11-4544-8d09-3b142c19d5ae" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="e2947550-bbcd-42c2-a320-008b32ed8bb8" />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="eb6f0674-66f6-47e8-bd80-298d1a891ae8" type="DB:CONNECTIVITY">
+				<ee:transform doc:name="Transform Message" doc:id="17628312-49bb-4dd8-bb61-2ab992a8c2b1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="9a4d54d7-e51d-4aa1-ad6e-601a1bba74bf" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

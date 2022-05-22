@@ -1,0 +1,204 @@
+#%RAML 1.0
+title: <YOUR_TITLE>
+version: v1
+baseUri: http://localhost:8081
+
+/createAccount:
+ post:
+   body:
+     application/json:
+       example:
+              {
+                "name": "Siva Ram",
+                "mobileNo": "900000001",
+                "emailId": "sivaram@gmail.com"
+              }
+   responses:
+     200:
+      body:
+        application/json:
+           example:
+             {
+               "message": "Account created successfully "
+             }
+                 
+/indigoFlights:
+ get:
+   queryParameters:
+     source:
+      example: HYD
+     destination:
+      example: BANG
+     doj:
+      example: 31-May-2022
+   responses:
+     200:
+       body:
+         application/json:
+           example:
+             [
+              {
+                  "ID": 101,
+                  "airline": "Indigo",
+                  "flightCode": "IND101",
+                  "fromAirportCode": "HYD",
+                  "toAirportCode": "BANG",
+                  "departureDate": "31-May-2022 ",
+                  "emptySeats": 0,
+                  "totalSeats": 200,
+                  "price": 199,
+                  "planeType": "Indigo 737"
+              },
+              {
+                  "ID": 102,
+                  "airline": "Indigo",
+                  "flightCode": "IND102",
+                  "fromAirportCode": "HYD",
+                  "toAirportCode": "BANG",
+                  "departureDate": "31-May-2022 ",
+                  "emptySeats": 24,
+                  "totalSeats": 350,
+                  "price": 450,
+                  "planeType": "Indigo 747"
+              },
+              {
+                  "ID": 103,
+                  "airline": "Indigo",
+                  "flightCode": "IND103",
+                  "fromAirportCode": "HYD",
+                  "toAirportCode": "BANG",
+                  "departureDate": "31-May-2022 ",
+                  "emptySeats": 33,
+                  "totalSeats": 400,
+                  "price": 450,
+                  "planeType": "Indigo 757"
+              }
+            ]   
+         
+/airIndiaFlights:         
+ get:
+   queryParameters:
+     source:
+      example: HYD
+     destination:
+      example: BANG
+     doj:
+      example: 31-May-2022        
+   responses:
+     200:
+       body:
+         application/json:
+           example:
+             [
+                {
+                    "Id": "201",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI201",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "0",
+                    "totalSeats": 200,
+                    "price": "199",
+                    "planeType": "AirIndia 737"
+                },
+                {
+                    "Id": "202",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI202",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "24",
+                    "totalSeats": 350,
+                    "price": "450",
+                    "planeType": "AirIndia 747"
+                },
+                {
+                    "Id": "203",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI203",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "33",
+                    "totalSeats": 400,
+                    "price": "450",
+                    "planeType": "AirIndia 757"
+                }
+            ]
+/searchAllFlights:         
+ get:
+   queryParameters:
+     source:
+      example: HYD
+     destination:
+      example: BANG
+     doj:
+      example: 31-May-2022        
+   responses:
+     200:
+       body:
+         application/json:
+           example:
+             [
+                {
+                    "Id": "201",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI201",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "0",
+                    "totalSeats": 200,
+                    "price": "199",
+                    "planeType": "AirIndia 737"
+                },
+                {
+                    "Id": "202",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI202",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "24",
+                    "totalSeats": 350,
+                    "price": "450",
+                    "planeType": "AirIndia 747"
+                },
+                {
+                    "Id": "203",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI203",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-May-2022 ",
+                    "emptySeats": "33",
+                    "totalSeats": 400,
+                    "price": "450",
+                    "planeType": "AirIndia 757"
+                }
+            ]            
+/accountDetails:
+  get:
+    queryParameters:
+      accountId:
+        example: '1001'
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+                    [
+                        {
+                            "accountId": 1001,
+                            "dateOfBirth": null,
+                            "gender": null,
+                            "phone": "8000000001",
+                            "name": "john",
+                            "email": "john@gmail.com"
+                        }
+                    ]
+                  
+
+

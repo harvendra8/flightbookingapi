@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="searchAllFlightsFlow" doc:id="6d10ae17-d4ea-4410-95e8-813a5dd5d417" >
+		<logger level="INFO" doc:name="Logger" doc:id="4babe5d3-2745-417e-a5ed-626a19bbce63" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="c028a9b2-4211-44bb-9e71-9b034a86b85d" >
+			<route >
+				<flow-ref doc:name="indigoFlightsFlow" doc:id="66d90c08-d3c3-461d-b073-c57a576ead28" name="indigoFlightsFlow"/>
+			</route>
+			<route >
+				<flow-ref doc:name="airIndiaFlightsFlow" doc:id="8352e4a4-2afe-47ea-9fdb-62568914f786" name="airIndiaFlightsFlow"/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="39f43441-72bf-4ef3-aee9-b634f4810642" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	indigoFlights:payload[0].payload,
+	airIndiaFlights:payload[1].payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
